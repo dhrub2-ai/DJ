@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1020" />
+  <meta name="description" content="DJ is your space for real-time messaging, photo and video sharing, and voice and video calls." />
+  <title>DJ — Stay close, wherever you are.</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <section class="welcome-view" id="welcomeView" aria-label="Join DJ">
+      <header class="marketing-header">
+        <div class="brand"><span class="brand-mark">DJ<span class="brand-spark">✦</span></span><span class="brand-name">DJ</span></div>
+        <span class="header-kicker"><span class="status-dot"></span> YOUR SPACE TO CONNECT</span>
+      </header>
+      <div class="landing-grid">
+        <div class="hero">
+          <span class="eyebrow"><span class="eyebrow-line"></span> CONNECTION, REIMAGINED</span>
+          <h1>Good conversations <em>bring us together.</em></h1>
+          <p class="hero-description">An easy, beautiful place to talk, share moments, and be together — wherever life takes you.</p>
+          <div class="hero-features">
+            <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H7l-4 2v-6.5a7.5 7.5 0 1 1 17-3Z"/></svg> Real-time chat</span>
+            <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 5a7 7 0 0 0-7 7v5a3 3 0 1 0 6 0v-5a1 1 0 1 0-2 0v5"/><path d="M7 12V5a3 3 0 0 1 6 0v7"/></svg> Share media</span>
+            <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-3 2a15 15 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2C9.2 21 3 14.8 3 7a3 3 0 0 1 2-3Z"/></svg> Voice & video</span>
+          </div>
+          <div class="hero-graphic" aria-hidden="true">
+            <div class="orb orb-one"></div><div class="orb orb-two"></div>
+            <div class="floating-card graphic-message"><div class="graphic-avatar">A</div><div><strong>Alex</strong><span>Hey! So good to see you 👋</span></div></div>
+            <div class="floating-card graphic-photo"><div class="photo-art"><div class="art-sun"></div><div class="art-mountain one"></div><div class="art-mountain two"></div></div><span>Little moments, shared.</span></div>
+            <div class="floating-card graphic-call"><span class="call-icon">♪</span><div><strong>Connected</strong><span>Just like you're together</span></div><span class="waveform">▂▄▆▃▅</span></div>
+          </div>
+        </div>
+        <div class="entry-column">
+          <div class="entry-card">
+            <div class="entry-card-top"><span class="entry-icon">✳</span><span class="step-label">WELCOME TO DJ</span></div>
+            <h2>Your people,<br>one place.</h2>
+            <p>Create a space and share the invite link, or join a conversation with a room code.</p>
+            <form id="entryForm" autocomplete="on">
+              <label for="nameInput">Your display name</label>
+              <input id="nameInput" type="text" maxlength="40" placeholder="What should we call you?" required autocomplete="nickname" />
+              <button id="createBtn" class="primary-btn" type="button">Create a new room <span aria-hidden="true">↗</span></button>
+              <div class="or-divider"><span>or join a friend</span></div>
+              <label for="roomInput">Room code or invite link</label>
+              <input id="roomInput" type="text" placeholder="Paste room code or link" autocomplete="off" />
+              <button id="joinBtn" class="secondary-btn" type="button">Join a room <span aria-hidden="true">→</span></button>
+            </form>
+            <div class="setup-notice" id="setupNotice" hidden><strong>One-time Firebase setup needed.</strong><span>See <code>README.md</code> included with the website files to connect live features.</span></div>
+            <p class="small-print">No account required. Rooms are accessible to people with the invitation link. Be thoughtful about what you share.</p>
+          </div>
+          <span class="under-card-note">MADE FOR THE MOMENTS THAT MATTER <span>✦</span></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="chat-view hidden" id="chatView" aria-label="DJ Chat">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-top"><div class="brand"><span class="brand-mark">DJ<span class="brand-spark">✦</span></span><span class="brand-name">DJ</span></div><button class="icon-btn sidebar-close" id="closeSidebar" type="button" title="Close menu" aria-label="Close menu">✕</button></div>
+        <div class="sidebar-section-caption">YOUR CONVERSATION</div>
+        <div class="active-room"><div class="active-room-icon">✳</div><div class="active-room-text"><strong id="sidebarRoomName">Our space</strong><span>Shared room</span></div><span class="active-room-current"></span></div>
+        <div class="sidebar-section-row"><span>PEOPLE IN ROOM</span><span class="member-count" id="memberCount">0</span></div>
+        <div id="memberList" class="member-list" aria-live="polite"></div>
+        <div class="sidebar-bottom"><div class="invite-card"><div class="invite-icon">↗</div><h3>Better together.</h3><p>Invite someone to join the conversation.</p><button type="button" id="inviteSidebarBtn">Copy invite link <span>↗</span></button></div><div class="me-chip"><div class="me-avatar" id="meAvatar">D</div><div><strong id="meName">You</strong><span>Connected to DJ</span></div><button type="button" id="leaveBtn" aria-label="Leave this room" title="Leave room">↪</button></div></div>
+      </aside>
+      <div class="mobile-sidebar-scrim hidden" id="sidebarScrim"></div>
+      <main class="conversation">
+        <header class="conversation-header"><div class="conversation-heading"><button type="button" id="menuBtn" class="icon-btn menu-btn" aria-label="Open menu">☰</button><div class="conversation-icon">✳</div><div><h2 id="roomTitle">Our space</h2><span class="header-subtitle"><span class="live-dot"></span> Live conversation <span class="interpunct">·</span> <span id="headerMembers">1 member</span></span></div></div><div class="header-actions"><button type="button" id="voiceBtn" class="action-button" title="Start voice call" aria-label="Start voice call"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h3l2 5-2.5 2a14 14 0 0 0 5.5 5.5L16 13l5 2v3a3 3 0 0 1-3 3C9.7 21 3 14.3 3 6a3 3 0 0 1 3-3Z"/></svg><span>Voice</span></button><button type="button" id="videoBtn" class="action-button" title="Start video call" aria-label="Start video call"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="13" height="14" rx="3"/><path d="m16 10 5-3v10l-5-3"/></svg><span>Video</span></button><button type="button" id="copyInviteBtn" class="action-button invite-header" title="Copy invite link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14 21 3m-7 0h7v7"/><path d="M21 13v5a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h5"/></svg><span>Invite</span></button></div></header>
+        <div class="conversation-content" id="conversationContent"><div class="messages" id="messageList" role="log" aria-live="polite" aria-relevant="additions text"><div class="empty-state"><div class="empty-illustration">✦</div><h2>A space for connection.</h2><p>Say hello to start the conversation.</p></div></div></div>
+        <div class="composer-wrap"><div class="upload-status hidden" id="uploadStatus"><span id="uploadLabel">Uploading…</span><div class="upload-track"><div class="upload-track-fill" id="uploadProgress"></div></div></div><div class="composer"><button type="button" id="attachBtn" class="composer-icon" aria-label="Attach image or video" title="Attach image or video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5 12 20a6 6 0 0 1-8.5-8.5L13 2.5a4 4 0 1 1 5.7 5.7l-9.2 9.2a2 2 0 1 1-2.8-2.8L15 6"/></svg></button><input id="fileInput" type="file" multiple accept="image/*,video/*" hidden /><textarea id="messageInput" rows="1" maxlength="4000" placeholder="Write a message..." aria-label="Write a message"></textarea><span class="composer-hint">Enter ↵</span><button type="button" id="sendBtn" class="send-button" title="Send message" aria-label="Send message"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12 16-9-5 18-4-7-7-2Z"/><path d="m11 14 9-11"/></svg></button></div><div class="composer-foot"><span>Share a thought, a photo or a moment.</span><span id="roomCodeDisplay">ROOM · —</span></div></div>
+      </main>
+    </section>
+  </div>
+
+  <div class="modal-backdrop hidden" id="peopleModal" role="dialog" aria-modal="true" aria-labelledby="peopleTitle"><div class="modal-card small-modal"><button type="button" id="closePeopleModal" class="modal-x" aria-label="Close">×</button><span class="modal-eyebrow">CALL SOMEONE</span><h2 id="peopleTitle">Choose a person</h2><p id="peopleHelp">Select someone in this room to start a call.</p><div id="callPeopleList" class="call-people-list"></div></div></div>
+
+  <div class="modal-backdrop hidden" id="incomingModal" role="dialog" aria-modal="true" aria-labelledby="incomingTitle"><div class="modal-card incoming-card"><div class="incoming-avatar" id="incomingAvatar">A</div><span class="modal-eyebrow">INCOMING CALL</span><h2 id="incomingTitle">Someone is calling</h2><p id="incomingSubtitle">Voice call</p><div class="incoming-buttons"><button type="button" id="declineBtn" class="decline-button">Decline</button><button type="button" id="acceptBtn" class="accept-button">Answer call</button></div></div></div>
+
+  <section class="call-overlay hidden" id="callOverlay" role="dialog" aria-modal="true" aria-label="Live call"><div class="call-container"><div class="call-topbar"><div class="call-logo">DJ <span>✦</span></div><div class="call-state"><span class="pulsing-indicator"></span><span id="callStateText">Connecting…</span></div></div><div class="call-stage"><video id="remoteVideo" autoplay playsinline></video><audio id="remoteAudio" autoplay></audio><div class="audio-avatar-wrap" id="audioPlaceholder"><div class="audio-avatar" id="audioAvatar">A</div><span id="audioPeerName">Connecting…</span><div class="audio-wave">▂▅▃▇▂▆▃</div></div><div class="local-preview" id="localPreview"><video id="localVideo" autoplay muted playsinline></video><div id="localPlaceholder" class="local-placeholder">YOU</div></div></div><div class="call-controls"><button type="button" id="micToggle" class="round-control" aria-label="Mute microphone" title="Mute microphone"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8"/></svg></button><button type="button" id="cameraToggle" class="round-control" aria-label="Toggle camera" title="Toggle camera"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="15" height="14" rx="3"/><path d="m17 10 5-3v10l-5-3"/></svg></button><button type="button" id="hangupBtn" class="round-control end-call" aria-label="End call" title="End call"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 16.3v-3.4a17.5 17.5 0 0 1 18 0v3.4c0 .6-.4 1-1 1h-3.1a1 1 0 0 1-.9-.7l-.8-2.2a13.4 13.4 0 0 0-6.4 0L8 16.6a1 1 0 0 1-.9.7H4c-.6 0-1-.4-1-1Z"/></svg></button></div><div class="call-footer-text" id="callFooterText">Your call is encrypted in transit by WebRTC.</div></div></section>
+  <div class="toast-area" id="toastArea" role="status" aria-live="polite"></div>
+  <script src="config.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
