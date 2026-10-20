@@ -2,10 +2,10 @@
 // Firebase Console > Project Settings > Your apps > Web app > SDK setup and configuration.
 // These are public client identifiers, NOT an admin key or service account secret.
 window.DJ_FIREBASE_CONFIG = {
-  apiKey: "PASTE_YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.firebasestorage.app",
-  messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID",
-  appId: "PASTE_YOUR_APP_ID"
-};
+  apiKey: "AIzaSyD0bE9obRXPpXQtuPO60I1DwtKI7czHWRI",
+    authDomain: "djdj-d75a4.firebaseapp.com",
+    projectId: "djdj-d75a4",
+    storageBucket: "djdj-d75a4.firebasestorage.app",
+    messagingSenderId: "991882619812",
+    appId: "1:991882619812:web:30b24bde7b5ab11cf26f31"
+  };
