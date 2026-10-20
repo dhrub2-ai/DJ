@@ -1,0 +1,20 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function member(roomId) {
+      return request.auth != null
+        && firestore.exists(/databases/(default)/documents/rooms/$(roomId)/members/$(request.auth.uid));
+    }
+    match /rooms/{roomId}/{uploaderUid}/{fileName} {
+      allow read: if member(roomId);
+      allow create: if member(roomId)
+        && request.auth.uid == uploaderUid
+        && request.resource.size > 0
+        && request.resource.size <= 104857600
+        && ((request.resource.contentType.matches('image/.*') && request.resource.size <= 15728640)
+            || request.resource.contentType.matches('video/.*'));
+      allow update, delete: if false;
+    }
+    match /{allPaths=**} { allow read, write: if false; }
+  }
+}

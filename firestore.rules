@@ -1,0 +1,102 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function roomExists(roomId) {
+      return exists(/databases/$(database)/documents/rooms/$(roomId));
+    }
+    function member(roomId) {
+      return signedIn() && exists(/databases/$(database)/documents/rooms/$(roomId)/members/$(request.auth.uid));
+    }
+    function validCandidate() {
+      return request.resource.data.keys().hasOnly(['candidate', 'sdpMid', 'sdpMLineIndex', 'usernameFragment'])
+        && request.resource.data.candidate is string
+        && request.resource.data.candidate.size() <= 5000;
+    }
+    match /rooms/{roomId} {
+      allow get: if signedIn(); // Users must know the unguessable 20-character invite code.
+      allow list: if false;
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['createdBy', 'createdAt', 'label'])
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.label is string
+        && request.resource.data.label.size() <= 100
+        && request.resource.data.createdAt == request.time;
+      allow update, delete: if false;
+
+      match /members/{memberId} {
+        allow get, list: if member(roomId);
+        allow create, update: if signedIn() && request.auth.uid == memberId
+          && roomExists(roomId)
+          && request.resource.data.keys().hasOnly(['uid', 'name', 'joinedAt'])
+          && request.resource.data.uid == memberId
+          && request.resource.data.name is string
+          && request.resource.data.name.size() > 0
+          && request.resource.data.name.size() <= 40
+          && request.resource.data.joinedAt is timestamp;
+        allow delete: if signedIn() && request.auth.uid == memberId;
+      }
+      match /messages/{messageId} {
+        allow get, list: if member(roomId);
+        allow create: if member(roomId)
+          && request.resource.data.senderId == request.auth.uid
+          && request.resource.data.senderName is string
+          && request.resource.data.senderName.size() <= 40
+          && request.resource.data.createdAt == request.time
+          && (
+            (request.resource.data.kind == 'text'
+             && request.resource.data.keys().hasOnly(['senderId','senderName','createdAt','kind','text'])
+             && request.resource.data.text is string
+             && request.resource.data.text.size() > 0
+             && request.resource.data.text.size() <= 4000)
+            ||
+            (request.resource.data.kind in ['image','video']
+             && request.resource.data.keys().hasOnly(['senderId','senderName','createdAt','kind','mediaUrl','mediaName','mediaSize'])
+             && request.resource.data.mediaUrl is string
+             && request.resource.data.mediaUrl.matches('https://firebasestorage.googleapis.com/.*')
+             && request.resource.data.mediaName is string
+             && request.resource.data.mediaName.size() <= 140
+             && request.resource.data.mediaSize is int
+             && request.resource.data.mediaSize > 0
+             && request.resource.data.mediaSize <= 104857600)
+          );
+        allow update, delete: if false;
+      }
+      match /calls/{callId} {
+        allow get, list: if member(roomId);
+        allow create: if member(roomId)
+          && request.resource.data.keys().hasOnly(['from','fromName','to','type','status','offer','createdAt'])
+          && request.resource.data.from == request.auth.uid
+          && request.resource.data.to is string
+          && exists(/databases/$(database)/documents/rooms/$(roomId)/members/$(request.resource.data.to))
+          && request.resource.data.fromName is string
+          && request.resource.data.fromName.size() <= 40
+          && request.resource.data.type in ['audio','video']
+          && request.resource.data.status == 'ringing'
+          && request.resource.data.offer.type == 'offer'
+          && request.resource.data.offer.sdp is string
+          && request.resource.data.createdAt == request.time;
+        allow update: if member(roomId)
+          && (request.auth.uid == resource.data.from || request.auth.uid == resource.data.to)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','answer','endedAt','endedBy'])
+          && request.resource.data.status in ['ringing','connected','ended','declined','missed'];
+        allow delete: if false;
+        match /offerCandidates/{candidateId} {
+          allow get, list: if member(roomId);
+          allow create: if member(roomId)
+            && get(/databases/$(database)/documents/rooms/$(roomId)/calls/$(callId)).data.from == request.auth.uid
+            && validCandidate();
+          allow update, delete: if false;
+        }
+        match /answerCandidates/{candidateId} {
+          allow get, list: if member(roomId);
+          allow create: if member(roomId)
+            && get(/databases/$(database)/documents/rooms/$(roomId)/calls/$(callId)).data.to == request.auth.uid
+            && validCandidate();
+          allow update, delete: if false;
+        }
+      }
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}
